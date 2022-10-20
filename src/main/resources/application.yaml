@@ -3,10 +3,20 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/securityDemo?useUnicode=true&characterEncoding=UTF-8
     username: root
-<<<<<<< HEAD
     password: 123456
-=======
-    password: 123456
+
+#redis配置文件
+  redis:
+    port: 6379
+    host: 192.168.112.100
+    database: 0
+    client-type: lettuce
+    lettuce:
+      pool:
+        max-active: 20
+        max-wait: 50000
+        max-idle: 5
+        min-idle: 100
 
 
 mybatis-plus:
@@ -16,16 +26,6 @@ server:
   port: 8081
 
 
-#jwt参数
-jwt:
-  data:
-    #jwt秘钥
-    SECRET: jwt-token-secret
-    #请求头
-    tokenHeader: Authorization
-    #过期时间
-    expiration: 24*60*60
-    #jwt负载中拿到的头信息
-    tokenHead: Bearer
 
->>>>>>> 9931ceb (实现认证)
+
+

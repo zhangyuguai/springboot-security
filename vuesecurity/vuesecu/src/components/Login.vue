@@ -18,6 +18,7 @@
 <script>
 import {postRequest} from "@/utils/api";
 import axios from "axios";
+import store from "@/store";
 export default {
   name: "Login",
   data(){
@@ -40,12 +41,25 @@ export default {
         password:loginForm.password
       }).then(
           res=>{
-            console.log(res.data)
+            store.commit('token',res.data.data)
+            axios.get('http://localhost:8081/config/user').then(
+                res=>{
+                  console.log('++++++',res.data)
+                  store.commit('login',res.data.data)
+                }
+            )
+            this.$router.push('/home')
           },
           error=>{
-
           }
       )
+
+
+    }
+  },
+  computed:{
+    user(){
+      return this.$store.state.user;
     }
   }
 }

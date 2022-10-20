@@ -6,7 +6,7 @@ package com.xiong.security.ResBean;
  * description:
  */
 
-import com.xiong.security.utils.ResultEnum;
+import com.xiong.security.common.utools.codeEnum.ResultEnum;
 
 import java.util.HashMap;
 

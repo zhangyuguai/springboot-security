@@ -1,20 +1,20 @@
 package com.xiong.security.config;
 
+import com.xiong.security.common.handler.MyLogoutHandler;
+import com.xiong.security.filter.JwtAuthenticationTokenFilter;
 import com.xiong.security.filter.LoginFilter;
-import com.xiong.security.service.impl.MyUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 /**
  * @author xsy
@@ -38,22 +38,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin().loginPage("/login_p").loginProcessingUrl("/login")
-                .usernameParameter("userName")
-                .passwordParameter("password").failureHandler(
-                        //设置认证失败回调
-                        (request, response, exception) -> {
-                    //设置响应内容格式
-                    response.setContentType("application/json;charset=utf-8");
+        http.formLogin().loginPage("/login_p")
+            .loginProcessingUrl("/login")
+            .usernameParameter("userName")
+            .passwordParameter("password")
+            .and()
+            .authorizeRequests().antMatchers("/login").permitAll().anyRequest()
+            .authenticated();
 
-                }).successHandler(
-                        //设置认证成功回调
-                        (request, response, authentication) -> {
+        http.addFilter(loginFilter(authenticationManager()))
+                        .addFilterBefore(jwtAuthenticationTokenFilter(), LogoutFilter.class);
 
-                }).and()
-                        .authorizeRequests().antMatchers("/login").permitAll();
-
-        http.addFilter(loginFilter(authenticationManager()));
+        http.logout().logoutUrl("/logout").addLogoutHandler(logoutHandler());
         //允许跨域
         http.cors();
         http.csrf().disable();
@@ -76,6 +72,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+
+
+    @Bean
+    public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() throws Exception {
+        return new JwtAuthenticationTokenFilter(authenticationManager());
+    }
+
+    @Bean
+    public LogoutHandler logoutHandler(){
+        return new MyLogoutHandler();
     }
 
 

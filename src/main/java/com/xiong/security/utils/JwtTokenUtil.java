@@ -1,4 +1,4 @@
-package com.xiong.utils;
+package com.xiong.security.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.CompressionCodecs;

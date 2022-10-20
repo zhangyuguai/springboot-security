@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 /**
  * @author xsy
  * @date 2022/10/19
@@ -29,8 +31,10 @@ public class MyUserDetailService implements UserDetailsService {
         queryWrapper.eq(StringUtils.isNotBlank(username),User::getUserName,username);
         User user = userService.getOne(queryWrapper);
         user.setPassword("$2a$10$nxmRVQ1UJRrri/mY5dl.c.CP10j9nS6XBGARBiOrxHU8YW4HXAp1m");
+        ArrayList<String> permissionValueList = new ArrayList<>();
+        permissionValueList.add("ROLE_ADMIN");
         if (user!=null){
-            return new SysUser(user,null);
+            return new SysUser(user,permissionValueList);
         }
         return new SysUser();
     }

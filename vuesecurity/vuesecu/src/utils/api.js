@@ -1,7 +1,13 @@
 import axios from 'axios'
 import {Message} from 'element-ui'
+import store from "@/store";
 
 axios.interceptors.request.use(config=> {
+    let token = store.state.token!==''&&store.state.token!==null?store.state.token:null;
+    if (token!=null) {
+       config.headers['token']=token;
+    }
+    console.log('!!!!!!!!!!!!!',config)
     return config;
 }, err=> {
     Message.error({message: '请求超时!'});
@@ -19,7 +25,7 @@ axios.interceptors.response.use(data=> {
     } else if (err.response.status == 403) {
         Message.error({message: '权限不足,请联系管理员!'});
     }else {
-        Message.error({message: '未知错误!'});
+        Message.error(err.msg);
     }
     return Promise.resolve(err);
 })

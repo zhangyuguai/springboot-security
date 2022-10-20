@@ -2,6 +2,7 @@ package com.xiong.security.controller;
 
 import com.xiong.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +21,7 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login_p")
+    @GetMapping("/login_p")
     public void login(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
