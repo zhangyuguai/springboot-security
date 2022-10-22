@@ -1,7 +1,7 @@
 package com.xiong.security.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xiong.security.ResBean.Result;
+import com.xiong.security.common.utools.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 

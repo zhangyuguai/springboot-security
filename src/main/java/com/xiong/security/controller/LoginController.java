@@ -1,6 +1,9 @@
 package com.xiong.security.controller;
 
+import com.xiong.security.common.utools.Result;
+import com.xiong.security.common.utools.codeEnum.ResultEnum;
 import com.xiong.security.service.UserService;
+import com.xiong.security.utils.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,12 +26,6 @@ public class LoginController {
 
     @GetMapping("/login_p")
     public void login(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.write("{\"status\":\"error\",\"msg\":\"尚未登录，请登录!\"}");
-        out.flush();
-        out.close();
-        //        return new RespBean("error", "尚未登录，请登录!");
+        ResponseUtil.out(response, Result.error(ResultEnum.UNAUTHORIZED.getCode(),ResultEnum.getMsgByCode(ResultEnum.UNAUTHORIZED.getCode())));
     }
 }

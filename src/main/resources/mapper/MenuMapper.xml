@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiong.security.mapper.MenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.xiong.security.entity.Menu">
+        <id property="menuId" column="menu_id" jdbcType="VARCHAR"/>
+        <result property="url" column="url" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="component" column="component" jdbcType="VARCHAR"/>
+        <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+        <result property="icon" column="icon" jdbcType="VARCHAR"/>
+        <result property="keepalive" column="keepAlive" jdbcType="TINYINT"/>
+        <result property="requireauth" column="requireAuth" jdbcType="TINYINT"/>
+        <result property="parentid" column="parentId" jdbcType="VARCHAR"/>
+        <result property="enable" column="enable" jdbcType="TINYINT"/>
+        <collection property="children" ofType="com.xiong.security.entity.Menu">
+            <result property="url" column="curl"/>
+            <result property="path" column="cpath"/>
+            <result property="component" column="ccomponent"/>
+            <result property="menuName" column="cmenuName"/>
+            <result property="icon" column="cicon"/>
+            <result property="keepalive" column="ckeepalive"/>
+            <result property="requireauth" column="crequireauth"/>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        menu_id
+        ,url,path,
+        component,menu_name,icon,
+        keepAlive,requireAuth,parentId,
+        enable
+    </sql>
+    <select id="getMenuByUid" resultMap="BaseResultMap">
+        SELECT p.menu_id,
+               p.url,
+               p.path,
+               p.component,
+               p.menu_name,
+               p.icon,
+               p.keepAlive,
+               p.requireAuth,
+               p.parentId,
+               c.url         as curl,
+               c.path        as cpath,
+               c.component   as ccomponent,
+               c.menu_name   as cmenuName,
+               c.icon        as cicon,
+               c.keepalive   as ckeepalive,
+               c.requireauth as crequireauth
+        FROM t_menu p,
+             t_menu c
+        WHERE p.menu_id = c.parentId
+          AND p.menu_id!='6'
+		AND c.menu_id IN (
+		SELECT
+			rm.mid
+		FROM
+			t_role_menu rm,
+			t_user_role ur
+		WHERE
+			rm.rid = ur.rid
+			AND ur.uid = '1'
+		)
+    </select>
+
+
+</mapper>

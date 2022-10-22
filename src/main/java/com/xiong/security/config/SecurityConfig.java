@@ -1,8 +1,10 @@
 package com.xiong.security.config;
 
 import com.xiong.security.common.handler.MyLogoutHandler;
+import com.xiong.security.common.handler.UnauthEntryPoint;
 import com.xiong.security.filter.JwtAuthenticationTokenFilter;
 import com.xiong.security.filter.LoginFilter;
+import com.xiong.security.utils.DefaultPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +13,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
@@ -28,7 +30,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService myUserDetailService;
 
     @Autowired
-    private  PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationEntryPoint UnAuthEntryPoint;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -39,15 +44,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.formLogin().loginPage("/login_p")
-            .loginProcessingUrl("/login")
-            .usernameParameter("userName")
-            .passwordParameter("password")
-            .and()
-            .authorizeRequests().antMatchers("/login").permitAll().anyRequest()
-            .authenticated();
+                .loginProcessingUrl("/login")
+                .usernameParameter("userName")
+                .passwordParameter("password")
+                .and()
+                .authorizeRequests().antMatchers("/login","/login_p").permitAll().anyRequest()
+                .authenticated();
 
         http.addFilter(loginFilter(authenticationManager()))
-                        .addFilterBefore(jwtAuthenticationTokenFilter(), LogoutFilter.class);
+                .addFilterBefore(jwtAuthenticationTokenFilter(), LogoutFilter.class);
+
+        //认证失败调用
+        http.exceptionHandling().authenticationEntryPoint(UnAuthEntryPoint);
 
         http.logout().logoutUrl("/logout").addLogoutHandler(logoutHandler());
         //允许跨域
@@ -57,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Bean
-    public LoginFilter loginFilter(AuthenticationManager authenticationManager){
+    public LoginFilter loginFilter(AuthenticationManager authenticationManager) {
         LoginFilter loginFilter = new LoginFilter();
         loginFilter.setAuthenticationManager(authenticationManager);
         return loginFilter;
@@ -70,10 +78,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    public PasswordEncoder passwordEncoder() {
+        return new DefaultPasswordEncoder();
     }
-
 
 
     @Bean
@@ -82,8 +89,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public LogoutHandler logoutHandler(){
+    public LogoutHandler logoutHandler() {
         return new MyLogoutHandler();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint(){
+        return new UnauthEntryPoint();
     }
 
 

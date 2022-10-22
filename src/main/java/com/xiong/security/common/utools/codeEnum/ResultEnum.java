@@ -10,12 +10,8 @@ public enum ResultEnum{
     /*网络异常、错误*/
     ERROR(500,"网络异常"),
 
+    UNAUTHORIZED(401,"未登录,访问失败!");
 
-    /* 参数错误：1000～1999 */
-    PARAM_NOT_VALID(1001, "参数无效"),
-    PARAM_IS_BLANK(1002, "参数为空"),
-    PARAM_TYPE_ERROR(1003, "参数类型错误"),
-    PARAM_NOT_COMPLETE(1004, "参数缺失");
 
     private int code;
     private String msg;

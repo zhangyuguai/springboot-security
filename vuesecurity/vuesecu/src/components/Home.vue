@@ -3,12 +3,12 @@
     <div>
       <el-container class="home-container">
         <el-header class="home-header">
-          <span class="home_title">微人事</span>
+          <span class="home_title">权限系统</span>
           <div style="display: flex;align-items: center;margin-right: 7px">
             <el-dropdown @command="handleCommand">
   <span class="el-dropdown-link home_userinfo" style="display: flex;align-items: center">
-    {{user.name}}
-    <i><img v-if="user.avatarUrl!=''" :src="user.avatarUrl"
+    {{ user.userName }}
+    <i><img v-if="user.avatarUrl!==null" :src="user.avatarUrl"
             style="width: 40px;height: 40px;margin-right: 5px;margin-left: 5px;border-radius: 40px"/></i>
   </span>
               <el-dropdown-menu slot="dropdown">
@@ -19,79 +19,82 @@
             </el-dropdown>
           </div>
         </el-header>
-<!--        <el-container>-->
-<!--          <el-aside width="180px" class="home-aside">-->
-<!--            <div style="display: flex;justify-content: flex-start;width: 180px;text-align: left;">-->
-<!--              <el-menu style="background: #ececec;width: 180px;" unique-opened router>-->
-<!--                <template v-for="(item,index) in this.routes" v-if="!item.hidden">-->
-<!--                  <el-submenu :key="index" :index="index+''">-->
-<!--                    <template slot="title">-->
-<!--                      <i :class="item.iconCls" style="color: #20a0ff;width: 14px;"></i>-->
-<!--                      <span slot="title">{{item.name}}</span>-->
-<!--                    </template>-->
-<!--                    <el-menu-item width="180px"-->
-<!--                                  style="padding-left: 30px;padding-right:0px;margin-left: 0px;width: 170px;text-align: left"-->
-<!--                                  v-for="child in item.children"-->
-<!--                                  :index="child.path"-->
-<!--                                  :key="child.path">{{child.name}}-->
-<!--                    </el-menu-item>-->
-<!--                  </el-submenu>-->
-<!--                </template>-->
-<!--              </el-menu>-->
-<!--            </div>-->
-<!--          </el-aside>-->
-<!--          <el-container>-->
-<!--            <el-main>-->
-<!--              <el-breadcrumb separator-class="el-icon-arrow-right">-->
-<!--                <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>-->
-<!--                <el-breadcrumb-item v-text="this.$router.currentRoute.name"></el-breadcrumb-item>-->
-<!--              </el-breadcrumb>-->
-<!--              <keep-alive>-->
-<!--                <router-view v-if="this.$route.meta.keepAlive"></router-view>-->
-<!--              </keep-alive>-->
-<!--              <router-view v-if="!this.$route.meta.keepAlive"></router-view>-->
-<!--            </el-main>-->
-<!--          </el-container>-->
-<!--        </el-container>-->
+        <el-container>
+          <el-aside width="180px" class="home-aside">
+            <div style="display: flex;justify-content: flex-start;width: 180px;text-align: left;">
+              <el-menu style="background: #ececec;width: 180px;" unique-opened router active-text-color="	#E6E6FA"
+                background-color="#DCDFE6">
+                <template v-for="(item,index) in routes" v-if="!item.hidden">
+                  <el-submenu :key="index" :index="index+''">
+                    <template slot="title">
+                      <i :class="item.icon" style="color: #20a0ff;width: 14px;"></i>
+                      <span slot="title">{{ item.menuName }}</span>
+                    </template>
+                    <el-menu-item width="180px"
+                                  style="padding-left: 30px;padding-right:0px;margin-left: 0px;width: 170px;text-align: left"
+                                  v-for="child in item.children"
+                                  :index="child.path"
+                                  :key="child.path">{{ child.menuName }}
+                    </el-menu-item>
+                  </el-submenu>
+                </template>
+              </el-menu>
+            </div>
+          </el-aside>
+          <el-container>
+            <el-main>
+              <el-breadcrumb separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item v-text="this.$router.currentRoute.name"></el-breadcrumb-item>
+              </el-breadcrumb>
+              <!--              <keep-alive>-->
+              <!--                <router-view v-if="!this.$route.meta.keepAlive"></router-view>-->
+              <!--              </keep-alive>-->
+              <router-view></router-view>
+            </el-main>
+          </el-container>
+        </el-container>
       </el-container>
     </div>
   </div>
 </template>
 <script>
-  import {getRequest} from "@/utils/api";
+import {getRequest} from "@/utils/api";
 
-  export default {
-    data() {
-      return {
-
+export default {
+  data() {
+    return {}
+  },
+  methods: {
+    handleCommand(cmd) {
+      if (cmd === "logout") {
+        this.$confirm('是否确认注销!', '提示', {
+          type: 'info',
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(() => {
+          //清除securityholder中存储的认证信息
+          getRequest('http://localhost:8081/logout');
+          //清除vuex共享的数据，user，routes
+          this.$store.commit('logout');
+          this.$router.replace('/');
+          this.$message.success('注销成功!');
+        })
       }
     },
-    methods:{
-      handleCommand(cmd){
-       if (cmd==="logout"){
-         this.$confirm('是否确认注销!','提示',{
-           type:'info',
-           confirmButtonText:'确定',
-           cancelButtonText:'取消'
-         }).then(()=>{
-
-           //清除securityholder中存储的认证信息
-           getRequest('http://localhost:8081/logout');
-           //清除vuex共享的数据，user，routes
-           this.$store.commit('logout');
-           this.$router.replace('/');
-           this.$message.success('注销成功!');
-         })
-       }
-      },
-      },
-    computed:{
-      user(){
-        return this.$store.state.user;
-      }
+  },
+  computed: {
+    user() {
+      return this.$store.state.user;
     },
-
+    routes() {
+      return this.$store.state.routes
+    }
+  },
+  mounted() {
   }
+
+}
 </script>
 <style>
 .home-container {
@@ -103,8 +106,7 @@
 }
 
 .home-header {
-  background-color: #20a0ff;
-  color: #333;
+  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);  color: #333;
   text-align: center;
   display: flex;
   align-items: center;

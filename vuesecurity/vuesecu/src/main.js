@@ -8,11 +8,24 @@ import {getRequest} from './utils/api'
 import {postRequest} from './utils/api'
 import {deleteRequest} from './utils/api'
 import {putRequest} from './utils/api'
-// import {initMenu} from './utils/utils'
+import {initMenu} from "@/utils/utils";
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 
-
+router.beforeEach((to, from, next)=> {
+      if (to.name === 'login') {
+        next();
+        return;
+      }
+     var token = store.state.token;
+      if(token===null){
+        next('login');
+      } else {
+        initMenu(router, store);
+        next();
+      }
+    }
+)
 new Vue({
   el:'#app',
   router,
@@ -23,5 +36,5 @@ new Vue({
     Vue.prototype.postRequest = postRequest;
     Vue.prototype.deleteRequest = deleteRequest;
     Vue.prototype.putRequest = putRequest;
-  }
+  },
 })

@@ -1,6 +1,6 @@
 package com.xiong.security.controller;
 
-import com.xiong.security.ResBean.Result;
+import com.xiong.security.common.utools.Result;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

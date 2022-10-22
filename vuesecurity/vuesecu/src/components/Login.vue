@@ -19,46 +19,59 @@
 import {postRequest} from "@/utils/api";
 import axios from "axios";
 import store from "@/store";
+import {initMenu} from "@/utils/utils";
+import router from "@/router";
+
 export default {
   name: "Login",
-  data(){
-    return{
-      loginForm:{},
-      checked:true,
+  data() {
+    return {
+      loginForm: {},
+      checked: true,
       rules: {
         account: [{required: true, message: '请输入用户名', trigger: 'blur'}],
         checkPass: [{required: true, message: '请输入密码', trigger: 'blur'}]
       },
-      loading:false
+      loading: false
     }
   },
-  methods:{
-    submitClick(){
-      this.loading=true;
-      let loginForm=this.loginForm
-      axios.post("http://localhost:8081/login",{
-        userName:loginForm.userName,
-        password:loginForm.password
+  methods: {
+    submitClick() {
+      this.loading = true;
+      let loginForm = this.loginForm
+      axios.post("http://localhost:8081/login", {
+        userName: loginForm.userName,
+        password: loginForm.password
       }).then(
-          res=>{
-            store.commit('token',res.data.data)
+          res => {
+            //判断是否认证成功
+            if (res.data.code != 200) {
+              this.loading = false;
+              this.$message.error(res.data.msg);
+              return;
+            }
+            //保存token
+            store.commit('token', res.data.data)
+            //加载用户信息
             axios.get('http://localhost:8081/config/user').then(
-                res=>{
-                  console.log('++++++',res.data)
-                  store.commit('login',res.data.data)
+                res => {
+                  console.log('++++++', res.data)
+                  //保存用户信息
+                  store.commit('login', res.data.data)
+                  this.$message.success('登陆成功!');
+                  this.$router.push('/home')
                 }
             )
-            this.$router.push('/home')
           },
-          error=>{
+          error => {
           }
       )
 
 
     }
   },
-  computed:{
-    user(){
+  computed: {
+    user() {
       return this.$store.state.user;
     }
   }

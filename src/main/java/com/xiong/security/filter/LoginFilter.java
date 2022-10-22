@@ -1,10 +1,10 @@
 package com.xiong.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xiong.security.common.utools.Result;
 import com.xiong.security.entity.SysUser;
 import com.xiong.security.entity.User;
 import com.xiong.security.utils.ResponseUtil;
-import com.xiong.security.ResBean.Result;
 import com.xiong.security.utils.TokenManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +90,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.info("TokenLoginFilter-unsuccessfulAuthentication：认证失败！");
         // 响应给前端调用处
-        ResponseUtil.out(response, Result.error());
+        ResponseUtil.out(response, Result.error("用户名或密码错误!"));
     }
 }

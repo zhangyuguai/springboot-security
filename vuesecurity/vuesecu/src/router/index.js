@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from "@/components/Login";
 import Home from "@/components/Home";
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -14,12 +13,17 @@ const routes = [
   {
     path: '/',
     name: 'login',
-    component: Login
+    component: Login,
+    hidden:true
   },
   {
     path: '/home',
     name: '主页',
-    component: Home
+    component: Home,
+    hidden: true,
+    meta:{
+      requireAuth:true
+    }
   }
   // {
   //   path: '/about',
@@ -32,7 +36,14 @@ const routes = [
 ]
 
 const router = new VueRouter({
+  mode:'history',
   routes
 })
+
+const originalPush = VueRouter.prototype.push
+
+
+
+
 
 export default router
