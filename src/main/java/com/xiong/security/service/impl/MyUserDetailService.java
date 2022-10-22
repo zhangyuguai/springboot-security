@@ -35,12 +35,10 @@ public class MyUserDetailService implements UserDetailsService {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(StringUtils.isNotBlank(username),User::getUserName,username);
         User user = userService.getOne(queryWrapper);
-
-        List<String> permissionValueList=roleService.getRoleListByUid();
-        if (user!=null){
-            return new SysUser(user,permissionValueList);
-        }else {
+        if (user==null){
             throw new UsernameNotFoundException("用户名或密码错误");
         }
+        List<String> permissionValueList=roleService.getRoleListByUid(user.getUserId());
+            return new SysUser(user,permissionValueList);
     }
 }

@@ -22,9 +22,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
     private MenuMapper menuMapper;
 
     @Override
-    public List<Menu> getMenusByUId() {
+    public List<Menu> getMenusByUId(String userId) {
 
-        return menuMapper.getMenuByUid();
+        return menuMapper.getMenuByUid(userId);
     }
 }
 

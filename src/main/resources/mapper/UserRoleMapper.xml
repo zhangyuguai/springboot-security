@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiong.security.mapper.UserRoleMapper">
+
+    <resultMap id="BaseResultMap" type="com.xiong.security.entity.UserRole">
+            <id property="uid" column="uid" jdbcType="VARCHAR"/>
+            <id property="rid" column="rid" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        uid,rid
+    </sql>
+</mapper>

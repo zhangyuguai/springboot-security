@@ -3,11 +3,15 @@ package com.xiong.security.config;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
  
-//1.表示这个类 是一个配置类  目的: 封装对象-交给Spring容器管理
+/**
+ * @author LENOVO
+ */ //1.表示这个类 是一个配置类  目的: 封装对象-交给Spring容器管理
 @Configuration
+@MapperScan("com.xiong.security.mapper")
 public class MybatisPlusConfig {
  
     // @Bean 将方法的返回值对象,交给Spring容器管理
@@ -17,8 +21,7 @@ public class MybatisPlusConfig {
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         //定义分页拦截器对象
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MARIADB));
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
- 
 }

@@ -20,6 +20,6 @@
             t_user u
                 LEFT JOIN t_user_role ur ON u.user_id = ur.uid
                 LEFT JOIN t_role r ON ur.rid = r.role_id
-                where u.user_id='1'
+        where u.user_id=#{userId}
     </select>
 </mapper>

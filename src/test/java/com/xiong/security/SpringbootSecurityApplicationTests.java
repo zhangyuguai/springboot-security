@@ -1,6 +1,7 @@
 package com.xiong.security;
 
 import com.xiong.security.entity.Menu;
+import com.xiong.security.entity.Role;
 import com.xiong.security.mapper.MenuMapper;
 import com.xiong.security.mapper.RoleMapper;
 import org.junit.jupiter.api.Test;
@@ -30,9 +31,9 @@ class SpringbootSecurityApplicationTests {
     }
     @Test
     public void test02(){
-        List<String> roleListByUid = roleMapper.getRoleListByUid();
+        List<String> roleListByUid = roleMapper.getRoleListByUid("1");
         System.out.println(roleListByUid);
-        List<Menu> menuByUid = menuMapper.getMenuByUid();
+        List<Menu> menuByUid = menuMapper.getMenuByUid("1");
         System.out.println(menuByUid);
     }
 }

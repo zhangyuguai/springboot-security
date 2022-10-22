@@ -4,15 +4,20 @@ export const initMenu = (router, store) => {
     if (store.state.routes.length > 0) {
         return;
     }
-    getRequest("http://localhost:8081/config/initMenu").then(
-        resp => {
-            if (resp && resp.status === 200) {
-                var fmtRoutes = formatRoutes(resp.data.data);
-                router.addRoutes(fmtRoutes);
-                store.commit('initMenu', fmtRoutes);
+
+    var user = store.state.user;
+    if (user!==null){
+        getRequest(`http://localhost:8081/config/initMenu/${user.userId}`).then(
+            resp => {
+                if (resp && resp.status === 200) {
+                    var fmtRoutes = formatRoutes(resp.data.data);
+                    router.addRoutes(fmtRoutes);
+                    store.commit('initMenu', fmtRoutes);
+                }
             }
-        }
-    )
+        )
+    }
+
 }
 export const formatRoutes = (routes) => {
     let fmRoutes = [];

@@ -1,5 +1,6 @@
 package com.xiong.security.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xiong.security.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,4 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface UserService extends IService<User> {
 
+    Page<User> getPageUser(Integer pageNum, Integer pageSize, String userName);
 }

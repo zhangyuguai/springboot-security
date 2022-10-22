@@ -62,7 +62,7 @@
 			t_user_role ur
 		WHERE
 			rm.rid = ur.rid
-			AND ur.uid = '1'
+			AND ur.uid = #{userId}
 		)
     </select>
 
