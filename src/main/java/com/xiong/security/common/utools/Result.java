@@ -1,63 +1,63 @@
 package com.xiong.security.common.utools;
 
-import com.xiong.security.common.utools.codeEnum.ResultEnum;
-
-import java.util.HashMap;
+import com.xiong.security.common.utools.codeEnum.ResultCode;
+import lombok.Data;
 
 /**
  * 封装统一返回实体类
  * 继承HashMap 可随时put自定义key-value
  */
-public class Result extends HashMap<String, Object> {
+@Data
+public class Result {
     /**
      * 状态码
      */
-    public static final String CODE_TAG = "code";
+    public Integer code;
 
     /**
      * 消息
      */
-    public static final String MSG_TAG = "msg";
+    public String msg;
 
     /**
      * 数据对象
      */
-    public static final String DATA_TAG = "data";
+    private Object data;
 
     public Result() {
     }
 
-    public Result(int code, String msg) {
-        super.put(CODE_TAG, code);
-        super.put(MSG_TAG, msg);
+    //只返回状态码
+    public Result(StatusCode statusCode) {
+        this.code= statusCode.getCode();
+        this.msg=statusCode.getMsg();
+        this.data=null;
     }
 
-    public Result(Integer code, String msg, Object obj) {
-        super.put(CODE_TAG, code);
-        super.put(MSG_TAG, msg);
-        if (obj != null) {
-            super.put(DATA_TAG, obj);
-        }
+
+    //返回指定的返回码,数据对象
+    public Result(StatusCode statusCode,Object data){
+        this.code=statusCode.getCode();
+        this.msg=statusCode.getMsg();
+        this.data=data;
     }
 
-    public static Result success() {
-        return new Result(ResultEnum.SUCCESS.getCode(), ResultEnum.SUCCESS.getMsg());
+    //手动设置返回
+    public Result(int code, String msg, Object data) {
+        this.code=code;
+        this.msg=msg;
+        this.data=data;
     }
 
-    public static Result success(Object obj) {
-        return new Result(ResultEnum.SUCCESS.getCode(), ResultEnum.SUCCESS.getMsg(), obj);
+    // 默认返回成功状态码，数据对象
+    public Result(Object data){
+        this.code= ResultCode.SUCCESS.getCode();
+        this.msg= ResultCode.SUCCESS.getMsg();
+        this.data=data;
     }
 
-    public static Result error() {
-        return new Result(ResultEnum.ERROR.getCode(), ResultEnum.ERROR.getMsg());
-    }
 
-    public static Result error(String msg) {
-        return new Result(ResultEnum.ERROR.getCode(), msg);
-    }
 
-    public static Result error(Integer code, String msg) {
-        return new Result(code, msg);
-    }
+
 
 }

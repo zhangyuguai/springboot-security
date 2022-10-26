@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/test")
 public class TestController {
-    @GetMapping
-    public Result test(){
-        return Result.success("哈哈哈");
-    }
+//    @GetMapping
+//    public Result test(){
+//        return Result.success("哈哈哈");
+//    }
 }

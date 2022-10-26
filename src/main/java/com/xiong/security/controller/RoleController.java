@@ -4,6 +4,7 @@ import com.xiong.security.common.utools.Result;
 import com.xiong.security.entity.Role;
 import com.xiong.security.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/role")
+//具有管理员权限才能访问
+@PreAuthorize("hasAnyAuthority('ROLE_admin')")
 public class RoleController {
 
     @Autowired
@@ -24,13 +27,13 @@ public class RoleController {
     @GetMapping
     public Result getRoleList(){
         List<Role> roleList = roleService.list();
-        return Result.success(roleList);
+        return new Result(roleList);
     }
 
     @GetMapping("/{userId}")
     public Result getRoleListByUid(@PathVariable("userId") String userId){
         List<String> roleListByUid = roleService.getRoleListByUid(userId);
-        return Result.success(roleListByUid);
+        return new Result(roleListByUid);
     }
 
 //    @PostMapping()

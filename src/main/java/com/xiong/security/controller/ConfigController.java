@@ -47,13 +47,13 @@ public class ConfigController {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(StringUtils.isNotBlank(userName),User::getUserName,userName);
         User user = userService.getOne(queryWrapper);
-        return Result.success(user);
+        return new Result(user);
     }
 
 
     @GetMapping("/initMenu/{userId}")
     public Result getMenuWithChildren(@PathVariable String userId){
         List<Menu> menuList = menuService.getMenusByUId(userId);
-        return Result.success(menuList);
+        return new Result(menuList);
     }
 }

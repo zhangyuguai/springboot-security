@@ -1,7 +1,8 @@
 package com.xiong.security.config;
 
 import com.xiong.security.common.handler.MyLogoutHandler;
-import com.xiong.security.common.handler.UnauthEntryPoint;
+import com.xiong.security.common.handler.UnAuthenticationHandler;
+import com.xiong.security.common.handler.UnAuthorityHandler;
 import com.xiong.security.filter.JwtAuthenticationTokenFilter;
 import com.xiong.security.filter.LoginFilter;
 import com.xiong.security.utils.DefaultPasswordEncoder;
@@ -10,13 +11,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author xsy
@@ -24,6 +35,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
  * description:
  */
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -34,6 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationEntryPoint UnAuthEntryPoint;
+
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -54,8 +69,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilter(loginFilter(authenticationManager()))
                 .addFilterBefore(jwtAuthenticationTokenFilter(), LogoutFilter.class);
 
-        //认证失败调用
-        http.exceptionHandling().authenticationEntryPoint(UnAuthEntryPoint);
+
+        http.exceptionHandling()
+                //认证失败调用
+                .authenticationEntryPoint(UnAuthEntryPoint)
+                //授权失败调用
+                        .accessDeniedHandler(accessDeniedHandler);
 
         http.logout().logoutUrl("/logout").addLogoutHandler(logoutHandler());
         //允许跨域
@@ -95,7 +114,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint(){
-        return new UnauthEntryPoint();
+        return new UnAuthenticationHandler();
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler(){
+        return new UnAuthorityHandler();
     }
 
 

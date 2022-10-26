@@ -24,6 +24,6 @@ public class UserController {
                             ,@PathVariable Integer pageSize
                             ,@RequestParam(required = false) String userName){
         Page<User> pageUser = userService.getPageUser(pageNum, pageSize, userName);
-        return Result.success(pageUser);
+        return new Result(pageUser);
     }
 }

@@ -3,11 +3,11 @@ package com.xiong.security.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.xiong.security.common.utools.Result;
+import com.xiong.security.common.utools.codeEnum.ResultCode;
 import com.xiong.security.entity.Role;
 import com.xiong.security.entity.UserRole;
 import com.xiong.security.service.RoleService;
 import com.xiong.security.service.UserRoleService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,9 +50,9 @@ public class UserRoleController {
 
         //插入新的用户角色
         if ( userRoleService.saveBatch(userRoles)){
-            return Result.success();
+            return new Result(ResultCode.SUCCESS);
         }
 
-        return Result.error("更新用户权限失败!");
+        return new Result(ResultCode.ERROR);
     }
 }

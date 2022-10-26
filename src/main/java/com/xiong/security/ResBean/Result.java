@@ -6,7 +6,7 @@ package com.xiong.security.ResBean;
  * description:
  */
 
-import com.xiong.security.common.utools.codeEnum.ResultEnum;
+import com.xiong.security.common.utools.codeEnum.ResultCode;
 
 import java.util.HashMap;
 
@@ -42,16 +42,16 @@ public class Result extends HashMap<String,Object> {
     }
 
     public static Result success(){
-        return new Result(ResultEnum.SUCCESS.getCode(),ResultEnum.SUCCESS.getMsg());
+        return new Result(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMsg());
     }
     public static Result success(Object obj){
-        return new Result(ResultEnum.SUCCESS.getCode(),ResultEnum.SUCCESS.getMsg(),obj);
+        return new Result(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMsg(),obj);
     }
     public static Result error(){
-        return new Result(ResultEnum.ERROR.getCode(),ResultEnum.ERROR.getMsg());
+        return new Result(ResultCode.ERROR.getCode(), ResultCode.ERROR.getMsg());
     }
     public static Result error(String msg){
-        return new Result(ResultEnum.ERROR.getCode(),msg);
+        return new Result(ResultCode.ERROR.getCode(),msg);
     }
     public static Result error(Integer code,String msg){
         return new Result(code,msg);
