@@ -26,6 +26,16 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
 
         return menuMapper.getMenuByUid(userId);
     }
+
+    @Override
+    public List<String> getMenuByRoleId(String roleId) {
+        return menuMapper.getMenuByRoleId(roleId);
+    }
+
+    @Override
+    public List<Menu> getMenuTree() {
+        return menuMapper.getMenuTree();
+    }
 }
 
 

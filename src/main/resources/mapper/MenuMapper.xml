@@ -16,6 +16,7 @@
         <result property="parentid" column="parentId" jdbcType="VARCHAR"/>
         <result property="enable" column="enable" jdbcType="TINYINT"/>
         <collection property="children" ofType="com.xiong.security.entity.Menu">
+            <result property="menuId" column="cmenuId"/>
             <result property="url" column="curl"/>
             <result property="path" column="cpath"/>
             <result property="component" column="ccomponent"/>
@@ -23,6 +24,10 @@
             <result property="icon" column="cicon"/>
             <result property="keepalive" column="ckeepalive"/>
             <result property="requireauth" column="crequireauth"/>
+            <collection property="children" ofType="com.xiong.security.entity.Menu">
+                <result property="menuId" column="ccmenuId"/>
+                <result property="menuName" column="ccmenuName"/>
+            </collection>
         </collection>
     </resultMap>
 
@@ -64,6 +69,32 @@
 			rm.rid = ur.rid
 			AND ur.uid = #{userId}
 		)
+    </select>
+    <select id="getMenuByRoleId" resultType="java.lang.String">
+        SELECT
+            m.menu_id
+        FROM
+            t_menu m
+                LEFT JOIN t_role_menu rm ON m.menu_id = rm.mid
+        WHERE
+            rm.rid = #{roleId}
+    </select>
+    <select id="getMenuTree" resultMap="BaseResultMap">
+        SELECT
+            m1.menu_id,
+            m1.menu_name,
+            m2.menu_id AS cmenuId,
+            m2.menu_name AS cmenuName,
+            m3.menu_id AS ccmenuId,
+            m3.menu_name AS ccmenuName
+        FROM
+            t_menu m1,
+            t_menu m2,
+            t_menu m3
+        WHERE
+            m1.menu_id = m2.parentId
+          AND m2.menu_id = m3.parentId
+          AND m3.`enable` =1
     </select>
 
 

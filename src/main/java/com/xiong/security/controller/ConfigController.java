@@ -41,7 +41,6 @@ public class ConfigController {
     //登陆之后获取用户
     @GetMapping("/user")
     public Result getUserInfo(){
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = (String) authentication.getPrincipal();
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();

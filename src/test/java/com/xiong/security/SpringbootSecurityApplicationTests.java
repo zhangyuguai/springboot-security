@@ -2,19 +2,23 @@ package com.xiong.security;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.xiong.security.common.utools.Result;
 import com.xiong.security.common.utools.StatusCode;
 import com.xiong.security.common.utools.codeEnum.ResultCode;
 import com.xiong.security.entity.Menu;
 import com.xiong.security.entity.Role;
+import com.xiong.security.entity.User;
 import com.xiong.security.mapper.MenuMapper;
 import com.xiong.security.mapper.RoleMapper;
+import com.xiong.security.service.UserService;
 import com.xiong.security.utils.TokenManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -30,6 +34,9 @@ class SpringbootSecurityApplicationTests {
 
     @Autowired
     private TokenManager tokenManager;
+
+    @Autowired
+    private UserService userService;
     @Test
     void contextLoads() {
     }
@@ -51,6 +58,13 @@ class SpringbootSecurityApplicationTests {
         Result result = new Result(ResultCode.SUCCESS, "成功");
         String s = new ObjectMapper().writeValueAsString(result);
         System.out.println(s);
+    }
+
+    @Test
+    public void test04() {
+        User user = new User();
+        user.setUserName("xiixxisadfdsfixix");
+        userService.saveOrUpdate(user);
     }
 
 
