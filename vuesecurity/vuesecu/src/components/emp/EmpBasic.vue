@@ -88,7 +88,7 @@
         </div>
       </el-dialog>
 
-      <el-dialog title="用户信息编辑" :visible.sync="dialogUserVisible">
+      <el-dialog title="用户信息编辑" :visible.sync="dialogUserVisible" @close="user={}">
         <template>
           <el-form :model="user">
             <el-form-item label="用户名:" :label-width="60+'px'">

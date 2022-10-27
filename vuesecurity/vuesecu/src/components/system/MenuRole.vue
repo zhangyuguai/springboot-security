@@ -17,22 +17,24 @@
     </div>
     <div>
       <el-collapse v-model="activeName" accordion @change="getRoleMenu">
-        <el-collapse-item v-for="role in roleList" :title=role.nameZh :name=role.roleId>
+        <el-collapse-item v-for="(role,index) in roleList" :title=role.nameZh :name=role.roleId :key="role.roleId">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>权限菜单</span>
               <el-button style="float: right; padding: 3px 0" type="text">添加权限菜单</el-button>
+              <el-button style="float: right; padding: 3px 0" type="text" @click="updateRole(role.roleId,index)">确定更改权限</el-button>
             </div>
             <el-tree
                 :data="data"
                 show-checkbox
+                :key="index"
                 node-key="menuId"
                 :default-expanded-keys="checkedMenus"
                 :default-checked-keys="checkedMenus"
                 :props="defaultProps"
+                ref="tree"
                 >
             </el-tree>
-
           </el-card>
         </el-collapse-item>
       </el-collapse>
@@ -41,9 +43,7 @@
 </template>
 <script>
 import axios from "axios";
-
 export default {
-
   data() {
     return {
       loading: false,
@@ -52,6 +52,7 @@ export default {
       roleNameZH: '',
       activeName: '',
       checkedMenus:[],
+
       data: [],
       defaultProps: {
         children: 'children',
@@ -92,6 +93,18 @@ export default {
     addNewRole() {
 
     },
+    //修改角色对应的权限菜单,一共有五棵树
+    updateRole(roleId,index){
+      //菜单数组
+      let menuIds = this.$refs.tree[index].getCheckedKeys(true);
+      axios.put(`http://localhost:8081/menuRole/update/${roleId}`,menuIds).then(
+          res=>{
+            if (res.data.code===200){
+              this.$message.success(res.data.msg);
+            }
+      })
+    },
+
 
   },
 

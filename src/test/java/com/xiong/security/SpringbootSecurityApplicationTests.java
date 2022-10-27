@@ -16,6 +16,7 @@ import com.xiong.security.utils.TokenManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
@@ -37,6 +38,9 @@ class SpringbootSecurityApplicationTests {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
     @Test
     void contextLoads() {
     }
@@ -65,6 +69,16 @@ class SpringbootSecurityApplicationTests {
         User user = new User();
         user.setUserName("xiixxisadfdsfixix");
         userService.saveOrUpdate(user);
+    }
+
+    @Test
+    public void test05() {
+        List<Role> roleList = roleMapper.selectList(null);
+//        redisTemplate.opsForValue().set("roleList",roleList);
+        List<Role> roleList1 = (List<Role>) redisTemplate.opsForValue().get("roleList");
+        System.out.println("----------------------------");
+        System.out.println(roleList1);
+
     }
 
 

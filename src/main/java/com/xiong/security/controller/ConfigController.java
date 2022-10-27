@@ -10,6 +10,7 @@ import com.xiong.security.service.MenuService;
 import com.xiong.security.service.UserService;
 import org.apache.ibatis.annotations.Results;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author xsy
@@ -38,21 +40,34 @@ public class ConfigController {
 
     @Autowired
     public AuthenticationManager authenticationManager;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     //登陆之后获取用户
     @GetMapping("/user")
-    public Result getUserInfo(){
+    public Result getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = (String) authentication.getPrincipal();
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(StringUtils.isNotBlank(userName),User::getUserName,userName);
+        queryWrapper.eq(StringUtils.isNotBlank(userName), User::getUserName, userName);
         User user = userService.getOne(queryWrapper);
         return new Result(user);
     }
 
 
     @GetMapping("/initMenu/{userId}")
-    public Result getMenuWithChildren(@PathVariable String userId){
-        List<Menu> menuList = menuService.getMenusByUId(userId);
+    public Result getMenuWithChildren(@PathVariable String userId) {
+
+        String prefix = "userMenu";
+        String redisMenuKey = prefix + userId;
+
+        List<Menu> menuList = null;
+        menuList = (List<Menu>) redisTemplate.opsForValue().get(redisMenuKey);
+        if (menuList==null){
+            menuList = menuService.getMenusByUId(userId);
+            redisTemplate.opsForValue().set(redisMenuKey,menuList);
+        }
         return new Result(menuList);
     }
 }

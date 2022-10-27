@@ -6,6 +6,7 @@ import com.xiong.security.common.utools.codeEnum.ResultCode;
 import com.xiong.security.entity.User;
 import com.xiong.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +27,22 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @GetMapping("/page/{pageNum}/{pageSize}")
     public Result getPageUser(@PathVariable Integer pageNum
                             ,@PathVariable Integer pageSize
                             ,@RequestParam(required = false) String userName){
-        Page<User> pageUser = userService.getPageUser(pageNum, pageSize, userName);
+        Page<User> pageUser=null;
+        pageUser = (Page<User>) redisTemplate.opsForValue().get("pageUser");
+        if (pageUser == null) {
+            pageUser = userService.getPageUser(pageNum, pageSize, userName);
+            redisTemplate.opsForValue().set("pageUser", pageUser);
+        }
         return new Result(pageUser);
+
+
     }
 
 
@@ -52,6 +63,7 @@ public class UserController {
             flag = userService.save(user);
         }
         if(flag){
+            redisTemplate.delete("pageUser");
             return new Result(ResultCode.SUCCESS,user);
         }
         return new Result(ResultCode.ERROR);
@@ -61,6 +73,7 @@ public class UserController {
     public Result deleteUser(@RequestBody List<String> idList){
         boolean flag = userService.removeByIds(idList);
         if(flag){
+            redisTemplate.delete("pageUser");
             return new Result(ResultCode.SUCCESS);
         }
         return new Result(ResultCode.ERROR);

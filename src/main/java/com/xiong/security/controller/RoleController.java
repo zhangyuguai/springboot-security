@@ -4,6 +4,7 @@ import com.xiong.security.common.utools.Result;
 import com.xiong.security.entity.Role;
 import com.xiong.security.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,16 +24,31 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-
+    @Autowired
+    private RedisTemplate redisTemplate;
     @GetMapping
     public Result getRoleList(){
-        List<Role> roleList = roleService.list();
+        List<Role> roleList=null;
+         roleList = (List<Role>) redisTemplate.opsForValue().get("roleList");
+         //redis中查询到数据
+        if (roleList == null) {
+            //未查询到，则去数据库查询
+            roleList = roleService.list();
+            redisTemplate.opsForValue().set("roleList", roleList);
+        }
         return new Result(roleList);
     }
 
     @GetMapping("/{userId}")
     public Result getRoleListByUid(@PathVariable("userId") String userId){
-        List<String> roleListByUid = roleService.getRoleListByUid(userId);
+        List<String> roleListByUid=null;
+        String prefix="userRole_";
+        String redisRoleByUid=prefix+userId;
+        roleListByUid = (List<String>) redisTemplate.opsForValue().get(redisRoleByUid);
+        if (roleListByUid == null) {
+            roleListByUid = roleService.getRoleListByUid(userId);
+            redisTemplate.opsForValue().set(redisRoleByUid,roleListByUid);
+        }
         return new Result(roleListByUid);
     }
 

@@ -9,6 +9,7 @@ import com.xiong.security.entity.UserRole;
 import com.xiong.security.service.RoleService;
 import com.xiong.security.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class UserRoleController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     //添加用户的角色
     @PostMapping("/{userId}")
     public Result insertUserRole(@PathVariable String userId, @RequestBody List<String> userRoleList){
@@ -50,6 +54,10 @@ public class UserRoleController {
 
         //插入新的用户角色
         if ( userRoleService.saveBatch(userRoles)){
+            //从redis中删除旧的用户角色
+            String prefix="userRole_";
+            String redisRoleByUid=prefix+userId;
+            redisTemplate.delete(redisRoleByUid);
             return new Result(ResultCode.SUCCESS);
         }
 
