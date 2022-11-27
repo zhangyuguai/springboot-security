@@ -5,6 +5,7 @@ import com.xiong.security.common.utools.Result;
 import com.xiong.security.common.utools.codeEnum.UnAuthCode;
 import com.xiong.security.entity.SysUser;
 import com.xiong.security.entity.User;
+import com.xiong.security.entity.vo.TokenVo;
 import com.xiong.security.utils.ResponseUtil;
 import com.xiong.security.utils.TokenManager;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -23,7 +23,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -46,7 +45,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     public LoginFilter() {
         this.setPostOnly(false);
-        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/login", "POST"));
+        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/user/login", "POST"));
     }
 
     //获取用户名和密码包装成UsernamePasswordAuthenticationToken，之后进行认证
@@ -55,7 +54,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         try {
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
             log.info("获取到的user信息:{}", user);
-            String username = user.getUserName();
+            String username = user.getUsername();
             username = (username != null) ? username : "";
             username = username.trim();
             String password = user.getPassword();
@@ -78,10 +77,19 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         List<String> permissionValueList = sysUser.getPermissionValueList();
         //生成token
         String token = tokenManager.createToken(sysUser.getUsername());
+
+        //tokenKey 为===> toke_  + token
+        String tokenKey= "token_"+token;
         //将token放入redis中
+        redisTemplate.opsForValue().set(tokenKey, token);
+        //将用户的权限列表存入redis中
         redisTemplate.opsForValue().set(sysUser.getUsername(), permissionValueList);
-        //利用response写出token给前端
-        ResponseUtil.out(response, new Result(token));
+        //利用response写出tokenVo给前端
+        long ExpireTime = tokenManager.getExpirationFromToken(token).getTime();
+        TokenVo tokenVo = new TokenVo();
+        tokenVo.setToken(token);
+        tokenVo.setExpireTime(ExpireTime);
+        ResponseUtil.out(response, new Result(tokenVo));
     }
 
     @Override
@@ -95,6 +103,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             ResponseUtil.out(response, new Result(UnAuthCode.ACCOUNTLOCK));
         } else if (e instanceof AccountExpiredException) {
             ResponseUtil.out(response, new Result(UnAuthCode.ACCOUNTTIMEOUT));
+        }else if (e instanceof CredentialsExpiredException){
+            ResponseUtil.out(response,new Result(UnAuthCode.CREDENTIALSEXPIRATION));
         }
     }
 }

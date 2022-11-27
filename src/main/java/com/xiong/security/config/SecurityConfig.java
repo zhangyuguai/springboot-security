@@ -58,12 +58,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin().loginPage("/login_p")
+        http.formLogin()
                 .loginProcessingUrl("/login")
-                .usernameParameter("userName")
+                .usernameParameter("username")
                 .passwordParameter("password")
                 .and()
-                .authorizeRequests().antMatchers("/login","/login_p").permitAll().anyRequest()
+                .authorizeRequests().antMatchers("/login","/logout_s").permitAll().anyRequest()
                 .authenticated();
 
         http.addFilter(loginFilter(authenticationManager()))
@@ -76,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //授权失败调用
                         .accessDeniedHandler(accessDeniedHandler);
 
-        http.logout().logoutUrl("/logout").addLogoutHandler(logoutHandler());
+        http.logout().logoutUrl("/api/user/logout").logoutSuccessUrl("/logout_s").addLogoutHandler(logoutHandler());
         //允许跨域
         http.cors();
         http.csrf().disable();

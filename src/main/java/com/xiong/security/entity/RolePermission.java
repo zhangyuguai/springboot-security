@@ -9,21 +9,21 @@ import lombok.Data;
 
 /**
  * 
- * @TableName t_role_menu
+ * @TableName sys_role_permission
  */
-@TableName(value ="t_role_menu")
+@TableName(value ="sys_role_permission")
 @Data
-public class RoleMenu implements Serializable {
+public class RolePermission implements Serializable {
     /**
-     * 角色id
+     * 角色ID
      */
-    @TableId
-    private String rid;
+    @TableId(type = IdType.AUTO)
+    private Long roleId;
 
     /**
-     * 菜单id
+     * 权限ID
      */
-    private String mid;
+    private Long permissionId;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
@@ -39,17 +39,17 @@ public class RoleMenu implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        RoleMenu other = (RoleMenu) that;
-        return (this.getRid() == null ? other.getRid() == null : this.getRid().equals(other.getRid()))
-            && (this.getMid() == null ? other.getMid() == null : this.getMid().equals(other.getMid()));
+        RolePermission other = (RolePermission) that;
+        return (this.getRoleId() == null ? other.getRoleId() == null : this.getRoleId().equals(other.getRoleId()))
+            && (this.getPermissionId() == null ? other.getPermissionId() == null : this.getPermissionId().equals(other.getPermissionId()));
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getRid() == null) ? 0 : getRid().hashCode());
-        result = prime * result + ((getMid() == null) ? 0 : getMid().hashCode());
+        result = prime * result + ((getRoleId() == null) ? 0 : getRoleId().hashCode());
+        result = prime * result + ((getPermissionId() == null) ? 0 : getPermissionId().hashCode());
         return result;
     }
 
@@ -59,8 +59,8 @@ public class RoleMenu implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", rid=").append(rid);
-        sb.append(", mid=").append(mid);
+        sb.append(", roleId=").append(roleId);
+        sb.append(", permissionId=").append(permissionId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

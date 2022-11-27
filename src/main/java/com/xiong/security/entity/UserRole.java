@@ -9,22 +9,21 @@ import lombok.Data;
 
 /**
  * 
- * @author LENOVO
- * @TableName t-user_role
+ * @TableName sys_user_role
  */
-@TableName(value ="t_user_role")
+@TableName(value ="sys_user_role")
 @Data
 public class UserRole implements Serializable {
     /**
-     * 用户id
+     * 用户编号
      */
-    @TableId
-    private String uid;
+    @TableId(type = IdType.AUTO)
+    private Long userId;
 
     /**
-     * 角色id
+     * 角色编号
      */
-    private String rid;
+    private Long roleId;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
@@ -41,16 +40,16 @@ public class UserRole implements Serializable {
             return false;
         }
         UserRole other = (UserRole) that;
-        return (this.getUid() == null ? other.getUid() == null : this.getUid().equals(other.getUid()))
-            && (this.getRid() == null ? other.getRid() == null : this.getRid().equals(other.getRid()));
+        return (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
+            && (this.getRoleId() == null ? other.getRoleId() == null : this.getRoleId().equals(other.getRoleId()));
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getUid() == null) ? 0 : getUid().hashCode());
-        result = prime * result + ((getRid() == null) ? 0 : getRid().hashCode());
+        result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
+        result = prime * result + ((getRoleId() == null) ? 0 : getRoleId().hashCode());
         return result;
     }
 
@@ -60,8 +59,8 @@ public class UserRole implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", uid=").append(uid);
-        sb.append(", rid=").append(rid);
+        sb.append(", userId=").append(userId);
+        sb.append(", roleId=").append(roleId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

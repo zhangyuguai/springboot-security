@@ -5,21 +5,43 @@
 <mapper namespace="com.xiong.security.mapper.RoleMapper">
 
     <resultMap id="BaseResultMap" type="com.xiong.security.entity.Role">
-            <id property="roleId" column="role_id" jdbcType="VARCHAR"/>
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="roleCode" column="role_code" jdbcType="VARCHAR"/>
             <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
-            <result property="nameZh" column="name_zh" jdbcType="VARCHAR"/>
+            <result property="createUser" column="create_user" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        role_id,role_name,name_zh
+        id,role_code,role_name,
+        create_user,create_time,update_time,
+        remark,is_delete
     </sql>
+    <insert id="saveRolePermission">
+        insert into sys_role_permission(role_id,permission_id) values 
+        <foreach collection="permissionIds" item="item" index="index" separator=",">
+            (#{roleId},#{item})
+        </foreach>
+    </insert>
     <select id="getRoleListByUid" resultType="java.lang.String">
         SELECT
-            r.role_name
+            r.role_code
         FROM
-            t_user u
-                LEFT JOIN t_user_role ur ON u.user_id = ur.uid
-                LEFT JOIN t_role r ON ur.rid = r.role_id
-        where u.user_id=#{userId}
+            sys_role r
+                LEFT JOIN sys_user_role ur ON r.id = ur.role_id
+                LEFT JOIN sys_user u ON ur.user_id = u.id
+        WHERE u.id=#{uid}
+    </select>
+    <select id="getRoleByUid" resultType="com.xiong.security.entity.Role">
+        SELECT
+            r.*
+        FROM
+            sys_role r
+                LEFT JOIN sys_user_role ur ON r.id = ur.role_id
+        WHERE
+            ur.user_id =#{uid}
     </select>
 </mapper>

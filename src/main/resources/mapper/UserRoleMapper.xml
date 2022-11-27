@@ -5,11 +5,11 @@
 <mapper namespace="com.xiong.security.mapper.UserRoleMapper">
 
     <resultMap id="BaseResultMap" type="com.xiong.security.entity.UserRole">
-            <id property="uid" column="uid" jdbcType="VARCHAR"/>
-            <id property="rid" column="rid" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="roleId" column="role_id" jdbcType="BIGINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        uid,rid
+        user_id,role_id
     </sql>
 </mapper>

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,30 +47,35 @@ public class SysUser implements UserDetails {
     @Override
     @JsonIgnore
     public String getUsername() {
-        return user.getUserName();
+        return user.getUsername();
     }
 
     @Override
     @JsonIgnore
     public boolean isAccountNonExpired() {
-        return true;
+        Integer isAccountNonExpired = user.getIsAccountNonExpired();
+
+        return isAccountNonExpired == 1;
     }
 
     @Override
     @JsonIgnore
     public boolean isAccountNonLocked() {
-        return true;
+        Integer isAccountNonLocked = user.getIsAccountNonLocked();
+        return isAccountNonLocked==1;
     }
 
     @Override
     @JsonIgnore
     public boolean isCredentialsNonExpired() {
-        return true;
+        Integer isAccountNonExpired = user.getIsCredentialsNonExpired();
+        return isAccountNonExpired==1;
     }
 
     @Override
     @JsonIgnore
     public boolean isEnabled() {
-        return true;
+        Integer isEnabled = user.getIsEnabled();
+        return isEnabled==1;
     }
 }

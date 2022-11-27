@@ -26,4 +26,9 @@ public class LoginController {
     public void login(HttpServletResponse response) throws IOException {
         ResponseUtil.out(response, new Result(ResultCode.UNAUTHORIZED));
     }
+
+    @GetMapping("/logout_s")
+    public Result logoutSuccessful(HttpServletResponse response){
+        return new Result(2000,"退出成功",null);
+    }
 }

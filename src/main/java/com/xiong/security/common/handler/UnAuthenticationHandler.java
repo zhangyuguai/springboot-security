@@ -1,6 +1,8 @@
 package com.xiong.security.common.handler;
 
+import com.xiong.security.common.exception.CustomerAuthenticationException;
 import com.xiong.security.common.utools.Result;
+import com.xiong.security.common.utools.codeEnum.ResultCode;
 import com.xiong.security.common.utools.codeEnum.UnAuthCode;
 import com.xiong.security.utils.ResponseUtil;
 import org.springframework.context.annotation.Bean;
@@ -35,11 +37,12 @@ public class UnAuthenticationHandler implements AuthenticationEntryPoint {
             ResponseUtil.out(httpServletResponse,new Result(UnAuthCode.ACCOUNTLOCK));
 
         }else if(e instanceof BadCredentialsException){
-            ResponseUtil.out(httpServletResponse,new Result(UnAuthCode.TOKENNOTCORRECT));
-        }else if(e instanceof InsufficientAuthenticationException){
-            //token不可用(不正确)
-            //token缺失
-            ResponseUtil.out(httpServletResponse,new Result(UnAuthCode.TOKENNOTCORRECT));
+            // //用户名或密码错误
+            ResponseUtil.out(httpServletResponse,new Result(UnAuthCode.UNAUTHORIZED));
+        }
+        else if (e instanceof CustomerAuthenticationException){
+            //token错误
+            ResponseUtil.out(httpServletResponse,new Result(600,e.getMessage(),null));
         }
     }
 

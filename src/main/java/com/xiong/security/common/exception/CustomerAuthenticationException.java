@@ -7,9 +7,9 @@ import org.springframework.security.core.AuthenticationException;
  * @date 2022/10/25 0:12
  * description:
  */
-public class TokenException extends AuthenticationException {
+public class CustomerAuthenticationException extends AuthenticationException {
 
-    public TokenException(String msg) {
+    public CustomerAuthenticationException(String msg) {
         super(msg);
     }
 }

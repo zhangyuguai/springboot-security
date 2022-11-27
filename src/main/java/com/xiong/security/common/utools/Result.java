@@ -19,6 +19,9 @@ public class Result {
      */
     public String msg;
 
+    //vue-admin用error会被拦截
+    private Boolean success;
+
     /**
      * 数据对象
      */
@@ -47,6 +50,14 @@ public class Result {
         this.code=code;
         this.msg=msg;
         this.data=data;
+    }
+
+    //手动设置返回
+    public Result(int code, String msg, Object data,Boolean success) {
+        this.code=code;
+        this.msg=msg;
+        this.data=data;
+        this.success=success;
     }
 
     // 默认返回成功状态码，数据对象
