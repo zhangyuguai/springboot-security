@@ -42,10 +42,10 @@ jwt:
 aliyun:
   oss:
     file:
-      endpoint: oss-cn-chengdu.aliyuncs.com
-      keyid: LTAI5tCWkQya3gyqTrtCwEsv
-      keysecret: fcGqvye7NtZX9x8lFPCfBwoETj5Djl
-      bucketname: xiong-study
+      endpoint:
+      keyid:
+      keysecret:
+      bucketname:
 
 
 
